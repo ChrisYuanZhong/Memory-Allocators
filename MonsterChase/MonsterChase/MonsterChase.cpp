@@ -3,11 +3,11 @@
 #include <string.h>
 #include <stdlib.h>
 #include <conio.h>
-#define SET_NAME(name) test##name
+#define MONSTERLIMIT 10
 using namespace std;
 
-int monsterLimit = 5;
 int monsterCount = 0;
+int nameCount = 0;
 
 class Entity
 {
@@ -15,24 +15,16 @@ public:
 	Entity(void)
 	{
 		name = NULL;
-		x = rand() % 101 - 50;	//Random number between -50 and 50.
+		x = rand() % 101 - 50;	//Random number -50~50.
 		y = rand() % 101 - 50;
 	}
-	Entity(char *name, bool property)
+
+	//For creating player.
+	Entity(char* name)
 	{
 		this->name = name;
-
-		//Property means the role of the entity, 0 means monster, 1 means player.
-		if (property = 1)
-		{
-			x = 0;
-			y = 0;
-		}
-		else
-		{
-			x = rand() % 101 - 50;	//Random number between -50 and 50.
-			y = rand() % 101 - 50;
-		}
+		x = 0;
+		y = 0;
 	}
 
 	void setName(char* name)
@@ -40,10 +32,10 @@ public:
 		this->name = name;
 	}
 
-	void setCoordinates(int x, int y)
+	void setCoordinates()
 	{
-		this->x = x;
-		this->y = y;
+		x = rand() % 101 - 50;	//Random number -50~50.
+		y = rand() % 101 - 50;
 	}
 
 	void moveLeft()
@@ -77,32 +69,72 @@ private:
 	int y;
 };
 
-void printMonsterInfo(Entity *monster)
+Entity* monster = new Entity[monsterCount];	//TODO
+
+void resizeMonster(int newSize)
+{
+	Entity* newMonster = new Entity[newSize];	//TODO
+	for (int i = 0; i < newSize; i++)
+		newMonster[i] = monster[i];
+	delete[] monster;
+	monster = newMonster;
+}
+
+void printMonsterInfo()
 {
 	for (int i = 0; i < monsterCount; i++)
 		monster[i].printCoordinates();
 }
 
-void moveMonsters(Entity *monster)
+void moveMonsters()
 {
 	int movement = 0;
 	for (int i = 0; i < monsterCount; i++)
 	{
-		movement = rand() % 5;
+		movement = rand() % 5;	//Generate a random number 0~4.
 		switch (movement)
 		{
-		case 0: break;
-		case 1: monster[i].moveLeft(); break;
-		case 2: monster[i].moveRight(); break;
-		case 3: monster[i].moveUp(); break;
-		case 4: monster[i].moveDown(); break;
+		case 0:
+			break;
+		case 1:
+			monster[i].moveLeft();
+			break;
+		case 2:
+			monster[i].moveRight();
+			break;
+		case 3:
+			monster[i].moveUp();
+			break;
+		case 4:
+			monster[i].moveDown();
+			break;
 		}
 	}
 }
 
-void newMonster(Entity* monster)
+void newMonster()
 {
-	//monster[monsterCount++].setName();
+	char tempName[] = "Monster0";
+	monsterCount++;
+	resizeMonster(monsterCount);
+	char* newName = new char[9];	//TODO
+	for (int i = 0; i < 9; i++)
+	{
+		newName[i] = tempName[i];
+	}
+	newName[7] = nameCount + '0';
+	nameCount++;
+	
+	monster[monsterCount-1].setName(newName);
+	monster[monsterCount-1].setCoordinates();
+
+}
+
+void killMonster()
+{
+	monsterCount--;
+	nameCount--;
+	resizeMonster(monsterCount);
 }
 
 int main()
@@ -123,11 +155,12 @@ int main()
 		cout << "Please Enter a Number > 0!" << endl;
 		goto inputNumber;
 	}
-	else if (number > 5)
-		monsterLimit = number;
+	/*else if (number > 5)
+		monsterLimit = number;*/
 
 	monsterCount = number;
-	Entity *monster = new Entity[monsterLimit];	//TODO
+	nameCount += number;
+	resizeMonster(monsterCount);
 
 	ch = getchar();	//Using getchar() to consume the '\n' user just inputted. Putting "ch" here so that there will be no warnings of ignoring the return value of getchar().
 	for (i = 0; i < monsterCount; i++)
@@ -141,13 +174,14 @@ int main()
 		tempName[j] = '\0';
 
 		//Create a new name string that perfectly fits the inputted name.
-		char *name = new char[j];	//TODO
+		char* name = new char[j];	//TODO
 		for (int k = 0; k <= j; k++)
 		{
 			name[k] = tempName[k];
 		}
 
 		monster[i].setName(name);
+		monster[i].setCoordinates();
 	}
 
 	//Setting the name for player
@@ -159,18 +193,17 @@ int main()
 	tempName[j] = '\0';
 	
 	//Create a new name string that perfectly fits the inputted name.
-	char *name = new char[j];	//TODO
+	char* name = new char[j];	//TODO
 	for (int k = 0; k <= j; k++)
 	{
 		name[k] = tempName[k];
 	}
-	//free(tempName);
 
-	Entity player(name, 1);
+	Entity player(name);
 
 	//First game loop
 	cout << endl << "Monsters:" << endl;
-	printMonsterInfo(monster);
+	printMonsterInfo();
 	cout << endl << "Player:" << endl;
 	player.printCoordinates();
 
@@ -187,10 +220,32 @@ int main()
 			player.moveUp();
 		else if (ch == 'S' || ch == 's')
 			player.moveDown();
+		
+		moveMonsters();
+		
+		i = rand() % 6;	//Generate a random number 0~5
+		switch (i)
+		{
+		case 0:
+			break;
+		case 1:
+			break;
+		case 2:
+			break;
+		case 3:
+			break;
+		case 4:
+			if (monsterCount < MONSTERLIMIT)
+				newMonster();
+			break;
+		case 5:
+			if (monsterCount > 0)
+				killMonster();
+			break;
+		}
 
-		moveMonsters(monster);
 		cout << "Monsters:" << endl;
-		printMonsterInfo(monster);
+		printMonsterInfo();
 		cout << endl << "Player:" << endl;
 		player.printCoordinates();
 
