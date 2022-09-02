@@ -27,6 +27,11 @@ public:
 		y = 0;
 	}
 
+	~Entity()
+	{
+		delete[] name;
+	}
+
 	void setName(char* name)
 	{
 		this->name = name;
@@ -69,14 +74,13 @@ private:
 	int y;
 };
 
-Entity* monster = new Entity[monsterCount];	//TODO
+Entity* monster = new Entity[monsterCount];
 
 void resizeMonster(int newSize)
 {
-	Entity* newMonster = new Entity[newSize];	//TODO
+	Entity* newMonster = new Entity[newSize];
 	for (int i = 0; i < newSize; i++)
 		newMonster[i] = monster[i];
-	delete[] monster;
 	monster = newMonster;
 }
 
@@ -117,7 +121,7 @@ void newMonster()
 	char tempName[] = "Monster0";
 	monsterCount++;
 	resizeMonster(monsterCount);
-	char* newName = new char[9];	//TODO
+	char* newName = new char[9];
 	for (int i = 0; i < 9; i++)
 	{
 		newName[i] = tempName[i];
@@ -127,23 +131,23 @@ void newMonster()
 	
 	monster[monsterCount-1].setName(newName);
 	monster[monsterCount-1].setCoordinates();
-
 }
 
 void killMonster()
 {
+	monster[monsterCount - 1].~Entity();
 	monsterCount--;
 	nameCount--;
-	resizeMonster(monsterCount);
 }
 
 int main()
 {
+
 	cout << "Welcome to MonsterChase!" << endl << endl;
 
 	int number;
 	int i, j;
-	char tempName[100] = {'\0'};
+	char* tempName= new char[100] {'\0'};
 	char ch;
 
 	inputNumber:
@@ -155,8 +159,6 @@ int main()
 		cout << "Please Enter a Number > 0!" << endl;
 		goto inputNumber;
 	}
-	/*else if (number > 5)
-		monsterLimit = number;*/
 
 	monsterCount = number;
 	nameCount += number;
@@ -174,7 +176,7 @@ int main()
 		tempName[j] = '\0';
 
 		//Create a new name string that perfectly fits the inputted name.
-		char* name = new char[j];	//TODO
+		char* name = new char[j+1];
 		for (int k = 0; k <= j; k++)
 		{
 			name[k] = tempName[k];
@@ -186,19 +188,20 @@ int main()
 
 	//Setting the name for player
 	cout << "Enter a name for the player: ";
-	for (j = 0; (ch = getchar()) != '\n'; j++)
+	for (j = 0; (ch = getchar()) != '\n'; j++)	
 	{
 		tempName[j] = ch;
 	}
 	tempName[j] = '\0';
-	
+
 	//Create a new name string that perfectly fits the inputted name.
-	char* name = new char[j];	//TODO
-	for (int k = 0; k <= j; k++)
+	char* name = new char[j+1];
+	for (int k = 0; k <= j; k++) 
 	{
 		name[k] = tempName[k];
 	}
 
+	delete[] tempName;
 	Entity player(name);
 
 	//First game loop
@@ -252,8 +255,8 @@ int main()
 		cout << "Press A to move left, D to move right, W to move up, S to move down or Q to quit" << endl << endl;
 	}
 
-	//delete[] name;
-	delete[] monster;
-	
+	for (i = 0; i < monsterCount; i++)
+		monster[i].~Entity();
+
 	return 0;
 }
