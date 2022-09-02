@@ -76,7 +76,7 @@ private:
 
 Entity* monster = new Entity[monsterCount];
 
-void resizeMonster(int newSize)
+void enlargeMonster(int newSize)
 {
 	Entity* newMonster = new Entity[newSize];
 	for (int i = 0; i < newSize; i++)
@@ -120,7 +120,7 @@ void newMonster()
 {
 	char tempName[] = "Monster0";
 	monsterCount++;
-	resizeMonster(monsterCount);
+	enlargeMonster(monsterCount);
 	char* newName = new char[9];
 	for (int i = 0; i < 9; i++)
 	{
@@ -162,7 +162,7 @@ int main()
 
 	monsterCount = number;
 	nameCount += number;
-	resizeMonster(monsterCount);
+	enlargeMonster(monsterCount);
 
 	ch = getchar();	//Using getchar() to consume the '\n' user just inputted. Putting "ch" here so that there will be no warnings of ignoring the return value of getchar().
 	for (i = 0; i < monsterCount; i++)
@@ -255,6 +255,7 @@ int main()
 		cout << "Press A to move left, D to move right, W to move up, S to move down or Q to quit" << endl << endl;
 	}
 
+	//Releasing allocated memory
 	for (i = 0; i < monsterCount; i++)
 		monster[i].~Entity();
 
