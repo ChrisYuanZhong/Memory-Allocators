@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <conio.h>
+#include <Engine.h>
 #define MONSTERLIMIT 10
 using namespace std;
 
@@ -15,16 +16,14 @@ public:
 	Entity(void)
 	{
 		name = NULL;
-		x = rand() % 101 - 50;	//Random number -50~50.
-		y = rand() % 101 - 50;
+		coordinates.setx(rand() % 101 - 50);	//Random number -50~50.
+		coordinates.sety(rand() % 101 - 50);
 	}
 
 	//For creating player.
 	Entity(char* name)
 	{
 		this->name = name;
-		x = 0;
-		y = 0;
 	}
 
 	~Entity()
@@ -39,39 +38,38 @@ public:
 
 	void setCoordinates()
 	{
-		x = rand() % 101 - 50;	//Random number -50~50.
-		y = rand() % 101 - 50;
+		coordinates.setx(rand() % 101 - 50);	//Random number -50~50.
+		coordinates.sety(rand() % 101 - 50);
 	}
 
 	void moveLeft()
 	{
-		x--;
+		coordinates -= Point2D(1, 0);
 	}
 
 	void moveRight()
 	{
-		x++;
+		coordinates += Point2D(1, 0);
 	}
 
 	void moveUp()
 	{
-		y++;
+		coordinates += Point2D(0, 1);
 	}
 
 	void moveDown()
 	{
-		y--;
+		coordinates -= Point2D(0, 1);
 	}
 
 	void printCoordinates()
 	{
-		cout << name << " is at " << "[ " << x << ", " << y << " ]" << endl;
+		cout << name << " is at " << "[ " << coordinates.getx() << ", " << coordinates.gety() << " ]" << endl;
 	}
 
 private:
 	char *name;
-	int x;
-	int y;
+	Point2D coordinates = Point2D(0, 0);
 };
 
 Entity* monster = new Entity[monsterCount];
@@ -142,7 +140,6 @@ void killMonster()
 
 int main()
 {
-
 	cout << "Welcome to MonsterChase!" << endl << endl;
 
 	int number;
