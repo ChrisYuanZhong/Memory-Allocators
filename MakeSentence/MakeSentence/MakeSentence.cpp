@@ -1,20 +1,40 @@
-// MakeSentence.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
+#include <stdio.h>
+#include <stdlib.h>
 #include <iostream>
+using namespace std;
 
 int main()
 {
-    std::cout << "Hello World!\n";
+	int letterCount = 0;
+	int j, k;
+	char ch;
+	char* sentence = (char*) malloc(0);
+	char* temp = new char[100] {'\0'};
+
+	for (; ;)
+	{
+		cout << "Enter a word for the sentence, empty to end: ";
+		for (j = 0; (ch = getchar()) != '\n'; j++)
+		{
+			temp[letterCount + j] = ch;
+		}
+		if (j == 0 && ch == '\n')
+		{
+			break;
+		}
+		temp[letterCount + j] = ' ';
+		letterCount += j + 1;
+	}
+	sentence = (char*) malloc(letterCount * sizeof(char));
+	for (k = 0; k < letterCount; k++)
+	{
+		sentence[k] = temp[k];
+	}
+	sentence[letterCount - 1] = '\0';
+	cout << "The sentence is \"" << sentence << ".\"";
+
+	free(sentence);
+	delete[] temp;
+
+	return 0;
 }
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
