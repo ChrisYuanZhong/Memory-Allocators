@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <crtdbg.h>
 #include <conio.h>
 #include <Engine.h>
 #define MONSTERLIMIT 10
@@ -28,8 +29,9 @@ public:
 
 	~Entity()
 	{
-		delete[] name;
+		//free(this->name);
 	}
+
 
 	void setName(char* name)
 	{
@@ -67,20 +69,13 @@ public:
 		cout << name << " is at " << "[ " << coordinates.getx() << ", " << coordinates.gety() << " ]" << endl;
 	}
 
+	char* name;
+
 private:
-	char *name;
 	Point2D coordinates = Point2D(0, 0);
 };
 
-Entity* monster = new Entity[monsterCount];
-
-void enlargeMonster(int newSize)
-{
-	Entity* newMonster = new Entity[newSize];
-	for (int i = 0; i < newSize; i++)
-		newMonster[i] = monster[i];
-	monster = newMonster;
-}
+Entity monster[MONSTERLIMIT];
 
 void printMonsterInfo()
 {
@@ -118,13 +113,15 @@ void newMonster()
 {
 	char tempName[] = "Monster0";
 	monsterCount++;
-	enlargeMonster(monsterCount);
-	char* newName = new char[9];
-	for (int i = 0; i < 9; i++)
+	char* newName = (char*)malloc(9 * sizeof(char));
+	for (int i = 0; i < 9 && newName; i++)
 	{
 		newName[i] = tempName[i];
 	}
-	newName[7] = nameCount + '0';
+	if (newName)
+	{
+		newName[7] = nameCount + '0';
+	}
 	nameCount++;
 	
 	monster[monsterCount-1].setName(newName);
@@ -133,7 +130,7 @@ void newMonster()
 
 void killMonster()
 {
-	monster[monsterCount - 1].~Entity();
+	free(monster[monsterCount - 1].name);
 	monsterCount--;
 	nameCount--;
 }
@@ -144,7 +141,8 @@ int main()
 
 	int number;
 	int i, j;
-	char* tempName= new char[100] {'\0'};
+	char* name = NULL;
+	char* tempName = NULL;
 	char ch;
 
 	inputNumber:
@@ -159,24 +157,27 @@ int main()
 
 	monsterCount = number;
 	nameCount += number;
-	enlargeMonster(monsterCount);
 
 	ch = getchar();	//Using getchar() to consume the '\n' user just inputted. Putting "ch" here so that there will be no warnings of ignoring the return value of getchar().
 	for (i = 0; i < monsterCount; i++)
 	{
+		name = (char*)malloc(0);
 		cout << "Enter a name for monster " << i << ": ";
 		
 		for (j = 0; (ch = getchar()) != '\n'; j++)
 		{
-			tempName[j] = ch;
-		}
-		tempName[j] = '\0';
+			tempName = (char*)realloc(name, (j + 1) * sizeof(char));
+			name = tempName;
 
-		//Create a new name string that perfectly fits the inputted name.
-		char* name = new char[j+1];
-		for (int k = 0; k <= j; k++)
+			name[j] = ch;
+		}
+
+		tempName = (char*)realloc(name, (j + 1) * sizeof(char));
+		name = tempName;
+
+		if (name)
 		{
-			name[k] = tempName[k];
+			name[j] = '\0';
 		}
 
 		monster[i].setName(name);
@@ -184,21 +185,24 @@ int main()
 	}
 
 	//Setting the name for player
+	name = (char*)malloc(0);
 	cout << "Enter a name for the player: ";
 	for (j = 0; (ch = getchar()) != '\n'; j++)	
 	{
-		tempName[j] = ch;
-	}
-	tempName[j] = '\0';
+		tempName = (char*)realloc(name, (j + 1) * sizeof(char));
+		name = tempName;
 
-	//Create a new name string that perfectly fits the inputted name.
-	char* name = new char[j+1];
-	for (int k = 0; k <= j; k++) 
+		name[j] = ch;
+	}
+
+	tempName = (char*)realloc(name, (j + 1) * sizeof(char));
+	name = tempName;
+
+	if (name)
 	{
-		name[k] = tempName[k];
+		name[j] = '\0';
 	}
 
-	delete[] tempName;
 	Entity player(name);
 
 	//First game loop
@@ -254,7 +258,12 @@ int main()
 
 	//Releasing allocated memory
 	for (i = 0; i < monsterCount; i++)
-		monster[i].~Entity();
+	{
+		free(monster[i].name);
+	}
+	free(player.name);
 
+
+	_CrtDumpMemoryLeaks();
 	return 0;
 }
