@@ -2,7 +2,7 @@
 
 class HeapManager {
 public:
-	HeapManager* create(void* i_pMemory, size_t i_sizeMemory, unsigned int i_numDescriptors);
+	static HeapManager* create(void* i_pMemory, size_t i_sizeMemory, unsigned int i_numDescriptors);
 	void destroy();
 	void* _alloc(size_t i_size);
 	void* _alloc(size_t i_size, unsigned int i_alignment);
