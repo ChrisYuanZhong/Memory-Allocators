@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <vector>
 
+#define USE_HEAP_ALLOC
 //#define SUPPORTS_ALIGNMENT
 //#define SUPPORTS_SHOWFREEBLOCKS
 //#define SUPPORTS_SHOWOUTSTANDINGALLOCATIONS
