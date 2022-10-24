@@ -50,21 +50,7 @@ bool main()
 	str[8] = 'c';
 	str[9] = '\0';
 
-	char* str1 = (char*)alloc(pHeapManager, 3 * sizeof(char));
-	//char* str = (char*)malloc(15 * sizeof(char));
-	str[0] = 'b';
-	str[1] = 'd';
-	str[2] = '.';
-	str[3] = 'h';
-	str[4] = 'c';
-	str[5] = 'c';
-	str[6] = 'c';
-	str[7] = 'c';
-	str[8] = 'c';
-	str[9] = '\0';
-
 	printf("String = %s  Address = %u\n", str, str);
 
-	printf("String = %s  Address = %u\n", str1, str1);
 	std::cout << sizeof(str) << 3 * sizeof(char);
 }

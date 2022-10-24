@@ -14,8 +14,8 @@ public:
 	void* _alloc(size_t i_size);
 	//void* _alloc(size_t i_size, unsigned int i_alignment);
 	bool _free(void* i_ptr);
-	//void collect();
-	//bool Contains(void* i_ptr) const;
+	void collect();
+	bool Contains(void* i_ptr) const;
 	//bool IsAllocated(void* i_ptr) const;
 	//size_t getLargestFreeBlock() const;
 	//size_t getTotalFreeMemory() const;
