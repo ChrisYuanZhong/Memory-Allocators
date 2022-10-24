@@ -16,12 +16,12 @@ namespace HeapManagerProxy
 		return HeapManager::create(i_pMemory, i_sizeMemory, i_numDescriptors);
 	}
 
-	void Destroy(HeapManager* i_pManager)
+	/*void Destroy(HeapManager* i_pManager)
 	{
 		assert(i_pManager);
 
 		i_pManager->destroy();
-	}
+	}*/
 
 	void* alloc(HeapManager* i_pManager, size_t i_size)
 	{
@@ -29,12 +29,12 @@ namespace HeapManagerProxy
 		return i_pManager->_alloc(i_size);
 	}
 
-	void* alloc(HeapManager* i_pManager, size_t i_size, unsigned int i_alignment)
+	/*void* alloc(HeapManager* i_pManager, size_t i_size, unsigned int i_alignment)
 	{
 		assert(i_pManager);
 
 		return i_pManager->_alloc(i_size, i_alignment);
-	}
+	}*/
 
 	bool free(HeapManager* i_pManager, void* i_ptr)
 	{
@@ -43,7 +43,7 @@ namespace HeapManagerProxy
 		return i_pManager->_free(i_ptr);
 	}
 
-	void Collect(HeapManager* i_pManager)
+	/*void Collect(HeapManager* i_pManager)
 	{
 		assert(i_pManager);
 
@@ -96,6 +96,6 @@ namespace HeapManagerProxy
 		printf("HeapManager compiled without __TRACK_ALLOCATIONS defined.\n");
 #endif
 
-	}
+	}*/
 
 } // namespace HeapManagerProxy
