@@ -18,9 +18,6 @@
     <ClCompile Include="HeapManagerProxy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="test.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="HeapManager_UnitTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

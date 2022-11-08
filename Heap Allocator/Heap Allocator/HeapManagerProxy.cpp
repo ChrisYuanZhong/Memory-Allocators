@@ -58,14 +58,21 @@ namespace HeapManagerProxy
 		return i_pManager->Contains(i_ptr);
 	}
 
-	/*bool IsAllocated(const HeapManager* i_pManager, void* i_ptr)
+	bool IsAllocated(const HeapManager* i_pManager, void* i_ptr)
 	{
 		assert(i_pManager);
 
 		return i_pManager->IsAllocated(i_ptr);
 	}
 
-	size_t GetLargestFreeBlock(const HeapManager* i_pManager)
+	void Destroy(const HeapManager* i_pManager)
+	{
+		assert(i_pManager);
+
+		i_pManager->destroy();
+	}
+
+	/*size_t GetLargestFreeBlock(const HeapManager* i_pManager)
 	{
 		assert(i_pManager);
 

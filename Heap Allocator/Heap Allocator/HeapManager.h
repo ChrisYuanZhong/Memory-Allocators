@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 struct MemoryBlock
 {
@@ -12,7 +12,7 @@ struct MemoryBlock* pFreeList = nullptr;
 class HeapManager {
 public:
 	static HeapManager* create(void* i_pMemory, size_t i_sizeMemory, unsigned int i_numDescriptors);
-	void destroy() {};
+	void destroy() const {};
 	void* _alloc(size_t i_size);
 	//void* _alloc(size_t i_size, unsigned int i_alignment);
 	bool _free(void* i_ptr);
@@ -30,6 +30,30 @@ private:
 	struct MemoryBlock* OutstandingAllocations = nullptr;
 };
 
+MemoryBlock* GetMemoryBlock()
+{
+	assert(pFreeList != nullptr);
+
+	MemoryBlock* pReturnBlock = pFreeList;
+	pFreeList = pFreeList->pNextBlock;
+
+	return pReturnBlock;
+}
+
+MemoryBlock* GetFreeMemoryBlock()
+{
+	return GetMemoryBlock();
+}
+
+// Returning a node to pFreeBlock after coalescing
+void ReturnMemoryBlock(MemoryBlock* i_pFreeBlock)
+{
+	assert(i_pFreeBlock != nullptr);
+	i_pFreeBlock->pBaseAddress = nullptr;
+	i_pFreeBlock->BlockSize = 0;
+	i_pFreeBlock->pNextBlock = pFreeList;
+	pFreeList = i_pFreeBlock;
+}
 
 HeapManager* HeapManager::create(void* i_pMemory, size_t i_sizeMemory, unsigned int i_numDescriptors)
 {
@@ -82,61 +106,33 @@ void* HeapManager::_alloc(size_t i_size)
 			break;
 		pFreeBlock = pFreeBlock->pNextBlock;
 	}
-	// oh no. we didn't find a block big enough
+	// oh no. we didn't find a block big enough
+	if (!pFreeBlock)
+	{
+		collect();
+		MemoryBlock* pFreeBlock = FreeList;
+		while (pFreeBlock)
+		{
+			if (pFreeBlock->BlockSize > i_size)
+				break;
+			pFreeBlock = pFreeBlock->pNextBlock;
+		}
+	}
+
+	// oh no. we didn't find a block big enough
 	assert(pFreeBlock);
 
 	pBlock->pBaseAddress = pFreeBlock->pBaseAddress;
 	pBlock->BlockSize = i_size;
 	TrackAllocation(pBlock);
 
-	// shrink this block
-	pFreeBlock->pBaseAddress += i_size;
+	//shrink this block
+	pFreeBlock->pBaseAddress = static_cast<char*>(pFreeBlock->pBaseAddress) + i_size;
+	//pFreeBlock->pBaseAddress += i_size;
+	pFreeBlock->pBaseAddress = static_cast<void*>(pFreeBlock->pBaseAddress);
 	pFreeBlock->BlockSize -= i_size;
+
 	return pBlock->pBaseAddress;
-
-
-	/*MemoryBlock* pFreeBlock = pFreeList;
-	MemoryBlock* pBlock = pFreeBlock;
-
-	if (pFreeBlock->BlockSize < i_size)
-	{
-		while (pFreeBlock->pNextBlock)
-		{
-			if (pFreeBlock->pNextBlock->BlockSize > i_size)
-			{
-				pBlock = pFreeBlock->pNextBlock;
-				break;
-			}
-			pFreeBlock = pFreeBlock->pNextBlock;
-		}
-		// oh no. we didn't find a block big enough
-		assert(pBlock);
-
-		// create a new node to represent the rest of this block
-		MemoryBlock* pNewNode = (MemoryBlock*)pBlock->pBaseAddress + i_size;
-		pNewNode->pBaseAddress = pNewNode + sizeof(MemoryBlock);
-		pNewNode->BlockSize = pBlock->BlockSize - i_size - sizeof(MemoryBlock);
-		pNewNode->pNextBlock = pBlock->pNextBlock;
-		pFreeBlock->pNextBlock = pNewNode;
-	}
-	else
-	{
-		assert(pBlock);
-
-		// create a new node to represent the rest of this block
-		MemoryBlock* pNewNode = (MemoryBlock*)pBlock->pBaseAddress + i_size;
-		pNewNode->pBaseAddress = pNewNode + sizeof(MemoryBlock);
-		pNewNode->BlockSize = pBlock->BlockSize - i_size - sizeof(MemoryBlock);
-		pNewNode->pNextBlock = pBlock->pNextBlock;
-		pFreeList = pNewNode;
-	}
-	
-	pBlock->BlockSize = i_size;
-	// track allocation
-	pBlock->pNextBlock = OutstandingAllocations;
-	OutstandingAllocations = pBlock;
-
-	return pBlock->pBaseAddress;*/
 }
 
 bool HeapManager::_free(void* i_ptr)
@@ -160,27 +156,24 @@ bool HeapManager::_free(void* i_ptr)
 		pBlock->pNextBlock = pFreeBlock->pNextBlock;
 	}
 
-
 	// put the block on the Freelist
-	pFreeBlock->pNextBlock = FreeList;
-	FreeList = pFreeBlock;
-
+	if (!FreeList || pFreeBlock->pBaseAddress < FreeList->pBaseAddress)
+	{
+		pFreeBlock->pNextBlock = FreeList;
+		FreeList = pFreeBlock;
+	}
+	else
+	{
+		for (pBlock = FreeList; pBlock->pNextBlock; pBlock = pBlock->pNextBlock)
+		{
+			if (pFreeBlock->pBaseAddress < pBlock->pNextBlock->pBaseAddress)
+			{
+				pFreeBlock->pNextBlock = pBlock->pNextBlock;
+				pBlock->pNextBlock = pFreeBlock;
+			}
+		}
+	}
 	return true;
-}
-
-MemoryBlock* GetFreeMemoryBlock()
-{
-	GetMemoryBlock();
-}
-
-MemoryBlock* GetMemoryBlock()
-{
-	assert(pFreeList != nullptr);
-
-	MemoryBlock* pReturnBlock = pFreeList;
-	pFreeList = pFreeList->pNextBlock;
-
-	return pReturnBlock;
 }
 
 void HeapManager::TrackAllocation(MemoryBlock* pBlock)
@@ -189,12 +182,38 @@ void HeapManager::TrackAllocation(MemoryBlock* pBlock)
 	OutstandingAllocations = pBlock;
 }
 
-// Returning a node to pFreeBlock after coalescing
-void ReturnMemoryBlock(MemoryBlock* i_pFreeBlock)
+bool HeapManager::Contains(void* i_ptr)const
 {
-	assert(i_pFreeBlock != nullptr);
-	i_pFreeBlock->pBaseAddress = nullptr;
-	i_pFreeBlock->BlockSize = 0;
-	i_pFreeBlock->pNextBlock = pFreeList;
-	pFreeList = i_pFreeBlock;
+	MemoryBlock* pBlock = OutstandingAllocations;
+
+	while (pBlock)
+	{
+		if (pBlock->pBaseAddress == i_ptr)
+			return true;
+		pBlock = pBlock->pNextBlock;
+	}
+
+	return false;
+}
+
+void HeapManager::collect()
+{
+	MemoryBlock* pBlock = FreeList;
+
+	for (; pBlock->pNextBlock; pBlock = pBlock->pNextBlock)
+	{
+		if (static_cast<char*>(pBlock->pBaseAddress) + pBlock->BlockSize == static_cast<char*>(pBlock->pNextBlock->pBaseAddress))
+		{
+			//Â expandÂ blockÂ 1Â toÂ includeÂ blockÂ 2Â memory
+			pBlock->BlockSize += pBlock->pNextBlock->BlockSize;
+
+			pBlock->pNextBlock = pBlock->pNextBlock->pNextBlock;
+
+			//Â putÂ pBlock2'sÂ MemoryBlockÂ inÂ theÂ freeÂ poolÂ (ofÂ MemoryBlocks)
+			ReturnMemoryBlock(pBlock->pNextBlock);
+
+			break;
+		}
+	}
+	collect();
 }
