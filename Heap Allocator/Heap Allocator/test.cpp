@@ -1,6 +1,7 @@
 #include "HeapManagerProxy.h"
 #include <Windows.h>
 #include <iostream>
+#include <string.h>
 
 #include <assert.h>
 #include <algorithm>
@@ -10,7 +11,7 @@
 //#define SUPPORTS_SHOWFREEBLOCKS
 //#define SUPPORTS_SHOWOUTSTANDINGALLOCATIONS
 
-bool main()
+int main()
 {
 	using namespace HeapManagerProxy;
 
@@ -37,20 +38,23 @@ bool main()
 	if (pHeapManager == nullptr)
 		return false;
 
-	char *str = (char*)alloc(pHeapManager, 3 * sizeof(char));
-	//char* str = (char*)malloc(15 * sizeof(char));
+	char *str = (char*)alloc(pHeapManager, 7 * sizeof(char));
+	char *str1 = (char*)alloc(pHeapManager, 3 * sizeof(char));
 	str[0] = 'a';
 	str[1] = 'b';
 	str[2] = 'c';
 	str[3] = 'c';
 	str[4] = 'c';
 	str[5] = 'c';
-	str[6] = 'c';
-	str[7] = 'c';
-	str[8] = 'c';
-	str[9] = '\0';
+	str[6] = '\0';
 
-	printf("String = %s  Address = %u\n", str, str);
+	str1[0] = 'b';
+	str1[1] = 'g';
+	str1[2] = '\0';
 
-	std::cout << sizeof(str) << 3 * sizeof(char);
+	printf("String = %s  String1 = %s\n", str, str1);
+	printf("String = %s  String1 = %s\n", str, str1);
+
+	free(pHeapManager, str);
+	printf("String = %s  String1 = %s\n", str, str1);
 }

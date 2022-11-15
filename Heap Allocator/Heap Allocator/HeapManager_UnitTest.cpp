@@ -249,3 +249,8 @@ bool HeapManager_UnitTest()
 	// we succeeded
 	return true;
 }
+
+bool main()
+{
+	return HeapManager_UnitTest();
+}
