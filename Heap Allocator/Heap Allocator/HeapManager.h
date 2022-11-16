@@ -25,7 +25,7 @@ public:
 
 	void TrackAllocation(MemoryBlock* pBlock);
 
-//private:
+private:
 	struct MemoryBlock* FreeList = nullptr;
 	struct MemoryBlock* OutstandingAllocations = nullptr;
 };
@@ -63,10 +63,6 @@ HeapManager* HeapManager::create(void* i_pMemory, size_t i_sizeMemory, unsigned 
 
 	pFreeList = reinterpret_cast<MemoryBlock*>(i_pMemory);
 
-	/*heapManager.pFreeList->pBaseAddress = heapManager.pFreeList + sizeof(MemoryBlock);
-	heapManager.pFreeList->BlockSize = i_sizeMemory - sizeof(MemoryBlock);
-	heapManager.pFreeList->pNextBlock = nullptr;*/
-
 	const size_t NumberofBlocks = i_sizeMemory / sizeof(MemoryBlock);
 
 	MemoryBlock* pCurrentBlock = pFreeList;
@@ -89,8 +85,6 @@ HeapManager* HeapManager::create(void* i_pMemory, size_t i_sizeMemory, unsigned 
 	pBlock->BlockSize = i_sizeMemory - sizeof(pFreeList) - sizeof(heapManager.FreeList) - sizeof(heapManager);
 	pBlock->pNextBlock = heapManager.FreeList;
 	heapManager.FreeList = pBlock;
-	
-	//pFreeList->BlockSize = i_sizeMemory;
 
 	return &heapManager;
 }
@@ -129,7 +123,6 @@ void* HeapManager::_alloc(size_t i_size)
 
 	//shrink this block
 	pFreeBlock->pBaseAddress = static_cast<char*>(pFreeBlock->pBaseAddress) + i_size;
-	//pFreeBlock->pBaseAddress += i_size;
 	pFreeBlock->pBaseAddress = static_cast<void*>(pFreeBlock->pBaseAddress);
 	pFreeBlock->BlockSize -= i_size;
 
@@ -139,7 +132,6 @@ void* HeapManager::_alloc(size_t i_size)
 bool HeapManager::_free(void* i_ptr)
 {
 	// remove the block for this pointer from OutstandingAllocations
-	//MemoryBlock* pBlock = (MemoryBlock*)i_ptr - sizeof(MemoryBlock);
 	MemoryBlock* pBlock = OutstandingAllocations;
 	MemoryBlock* pFreeBlock = nullptr;
 	
@@ -179,7 +171,6 @@ bool HeapManager::_free(void* i_ptr)
 			if (pFreeBlock->pBaseAddress < pBlock->pNextBlock->pBaseAddress)
 			{
 				pFreeBlock->pNextBlock = pBlock->pNextBlock;
-				//printf("String = %s  String1 = %s\n", OutstandingAllocations->pBaseAddress, pFreeBlock->pBaseAddress);
 				pBlock->pNextBlock = pFreeBlock;
 				break;
 			}
