@@ -38,23 +38,28 @@ int main()
 	if (pHeapManager == nullptr)
 		return false;
 
-	char *str = (char*)alloc(pHeapManager, 7 * sizeof(char));
+	char *str = (char*)alloc(pHeapManager, 3 * sizeof(char));
 	char *str1 = (char*)alloc(pHeapManager, 3 * sizeof(char));
+	char* str2 = (char*)alloc(pHeapManager, 4 * sizeof(char));
 	str[0] = 'a';
 	str[1] = 'b';
-	str[2] = 'c';
-	str[3] = 'c';
-	str[4] = 'c';
-	str[5] = 'c';
-	str[6] = '\0';
+	str[2] = '\0';
+	//str[3] = 'c';
+	//str[4] = 'c';
+	//str[5] = 'c';
+	//str[6] = '\0';
 
 	str1[0] = 'b';
 	str1[1] = 'g';
 	str1[2] = '\0';
 
-	printf("String = %s  String1 = %s\n", str, str1);
-	printf("String = %s  String1 = %s\n", str, str1);
+	str2[0] = 'x';
+	str2[1] = 'y';
+	str2[2] = 'u';
+	str2[3] = '\0';
+
+	printf("String = %s  String1 = %s  String2 = %s\n", str, str1, str2);
 
 	free(pHeapManager, str);
-	printf("String = %s  String1 = %s\n", str, str1);
+	printf("String = %s  String1 = %s  String2 = %s\n", str, str1, str2);
 }

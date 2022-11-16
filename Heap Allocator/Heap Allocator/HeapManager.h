@@ -141,10 +141,15 @@ bool HeapManager::_free(void* i_ptr)
 	// remove the block for this pointer from OutstandingAllocations
 	//MemoryBlock* pBlock = (MemoryBlock*)i_ptr - sizeof(MemoryBlock);
 	MemoryBlock* pBlock = OutstandingAllocations;
-	MemoryBlock* pFreeBlock = OutstandingAllocations;
-	if (pBlock->pBaseAddress != i_ptr)
+	MemoryBlock* pFreeBlock = nullptr;
+	
+	if (pBlock->pBaseAddress == i_ptr)
 	{
-		pFreeBlock = nullptr;
+		pFreeBlock = pBlock;
+		OutstandingAllocations = OutstandingAllocations->pNextBlock;
+	}
+	else
+	{
 		while (pBlock->pNextBlock)
 		{
 			if (pBlock->pNextBlock->pBaseAddress == i_ptr)
@@ -166,6 +171,7 @@ bool HeapManager::_free(void* i_ptr)
 	{
 		pFreeBlock->pNextBlock = FreeList;
 		FreeList = pFreeBlock;
+		printf("String = %s  String1 = %s  String2 = %s\n", OutstandingAllocations->pBaseAddress, OutstandingAllocations->pNextBlock->pBaseAddress, pFreeBlock->pBaseAddress);
 	}
 	else
 	{
