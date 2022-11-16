@@ -128,7 +128,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="HeapManagerProxy.cpp" />
-    <ClCompile Include="test.cpp" />
+    <ClCompile Include="HeapManager_UnitTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HeapManager.h" />

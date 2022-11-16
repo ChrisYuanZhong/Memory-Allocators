@@ -55,11 +55,15 @@ int main()
 
 	str2[0] = 'x';
 	str2[1] = 'y';
-	str2[2] = 'u';
+	str2[2] = 'v';
 	str2[3] = '\0';
 
 	printf("String = %s  String1 = %s  String2 = %s\n", str, str1, str2);
 
-	free(pHeapManager, str);
+	std::cout << Contains(pHeapManager, str2);
+
+	free(pHeapManager, str2);
 	printf("String = %s  String1 = %s  String2 = %s\n", str, str1, str2);
+	std::cout << Contains(pHeapManager, str2);
+
 }

@@ -25,7 +25,7 @@ public:
 
 	void TrackAllocation(MemoryBlock* pBlock);
 
-private:
+//private:
 	struct MemoryBlock* FreeList = nullptr;
 	struct MemoryBlock* OutstandingAllocations = nullptr;
 };
@@ -84,7 +84,7 @@ HeapManager* HeapManager::create(void* i_pMemory, size_t i_sizeMemory, unsigned 
 
 	MemoryBlock* pBlock = GetMemoryBlock();
 	pBlock->pBaseAddress = static_cast<char*>(pBlock->pBaseAddress);
-	pBlock->pBaseAddress = static_cast<char*>(i_pMemory) + sizeof(pFreeList) + sizeof(heapManager.FreeList) + sizeof(heapManager);
+	pBlock->pBaseAddress = static_cast<char*>(i_pMemory) + sizeof(pFreeList) + sizeof(heapManager.FreeList) + sizeof(heapManager) + 16;
 	pBlock->pBaseAddress = static_cast<void*>(pBlock->pBaseAddress);
 	pBlock->BlockSize = i_sizeMemory - sizeof(pFreeList) - sizeof(heapManager.FreeList) - sizeof(heapManager);
 	pBlock->pNextBlock = heapManager.FreeList;
@@ -171,7 +171,6 @@ bool HeapManager::_free(void* i_ptr)
 	{
 		pFreeBlock->pNextBlock = FreeList;
 		FreeList = pFreeBlock;
-		printf("String = %s  String1 = %s  String2 = %s\n", OutstandingAllocations->pBaseAddress, OutstandingAllocations->pNextBlock->pBaseAddress, pFreeBlock->pBaseAddress);
 	}
 	else
 	{
@@ -180,6 +179,7 @@ bool HeapManager::_free(void* i_ptr)
 			if (pFreeBlock->pBaseAddress < pBlock->pNextBlock->pBaseAddress)
 			{
 				pFreeBlock->pNextBlock = pBlock->pNextBlock;
+				//printf("String = %s  String1 = %s\n", OutstandingAllocations->pBaseAddress, pFreeBlock->pBaseAddress);
 				pBlock->pNextBlock = pFreeBlock;
 				break;
 			}
