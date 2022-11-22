@@ -16,7 +16,6 @@ public:
 	{ }
 	~Human()
 	{
-		printf("1");
 		if (m_Name)
 			free(const_cast<char*>(m_Name));
 	}

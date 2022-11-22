@@ -74,6 +74,9 @@ void RunGame()
 		if ((*iter)->GetHealth() < 0)
 		{
 			// delete them
+			Human* TempPtr = dynamic_cast <Human*>((*iter));
+			if (TempPtr != NULL)
+				TempPtr->~Human();
 			delete (*iter);
 			// erase them from the vector
 			iter = AllActors.erase(iter);
@@ -83,6 +86,10 @@ void RunGame()
 			{
 				const char* pTypeName = (*iter)->getTypeName();
 				printf("The last GameActor standing is a %s. %s types win!!!!\n", pTypeName, pTypeName);
+				TempPtr = dynamic_cast <Human*>((*iter));
+				if (TempPtr != NULL)
+					TempPtr->~Human();
+				delete (*iter);
 				break;
 			}
 		}
