@@ -10,7 +10,7 @@ public:
 		m_Health(i_InitialHealth)
 	{ }
 
-	~GameActor() {}
+	virtual ~GameActor() {}
 
 	// move it
 	void UpdatePosition(const Engine::Math::Vector2& i_Movement) { m_Position += i_Movement; }
