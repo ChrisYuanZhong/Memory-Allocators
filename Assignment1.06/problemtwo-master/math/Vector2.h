@@ -8,6 +8,10 @@ namespace Engine
 		class Vector2
 		{
 		public:
+			Vector2()
+			{
+				m_x = m_y = 0;
+			}
 			// standard constructor
 			inline Vector2(float i_x, float i_y);
 			// copy constructor - for completeness

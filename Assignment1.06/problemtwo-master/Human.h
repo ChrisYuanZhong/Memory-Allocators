@@ -14,9 +14,12 @@ public:
 		GameActor(i_InitialPosition, i_InitialHealth),
 		m_Name(_strdup(i_pName ? i_pName : "Unknown"))
 	{ }
+
+	Human(const Human& other) :GameActor(Engine::Math::Vector2(0, 0), 100), m_Name(_strdup(other.m_Name ? other.m_Name : "Unknown")) {
+	}
+
 	~Human()
 	{
-		printf("1");
 		if (m_Name)
 			free(const_cast<char*>(m_Name));
 	}
