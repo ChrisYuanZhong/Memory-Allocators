@@ -16,7 +16,7 @@ public:
 	void* _alloc(const size_t i_size);
 	//void* _alloc(size_t i_size, unsigned int i_alignment);
 	bool _free(const void* i_ptr);
-	inline void collect();
+	inline void collect() const;
 	inline bool Contains(const void* i_ptr) const;
 	inline bool IsAllocated(void* i_ptr) const { return true; }
 	//size_t getLargestFreeBlock() const;
@@ -38,11 +38,6 @@ inline MemoryBlock* GetMemoryBlock()
 	pFreeList = pFreeList->pNextBlock;
 
 	return pReturnBlock;
-}
-
-inline MemoryBlock* GetFreeMemoryBlock()
-{
-	return GetMemoryBlock();
 }
 
 // Returning a node to pFreeBlock after coalescing
@@ -91,7 +86,7 @@ HeapManager* HeapManager::create(void* i_pMemory, const size_t i_sizeMemory, con
 
 void* HeapManager::_alloc(const size_t i_size)
 {
-	MemoryBlock* pBlock = GetFreeMemoryBlock();
+	MemoryBlock* pBlock = GetMemoryBlock();
 
 	MemoryBlock* pFreeBlock = FreeList;
 	while (pFreeBlock)
@@ -199,7 +194,7 @@ inline bool HeapManager::Contains(const void* i_ptr)const
 	return false;
 }
 
-inline void HeapManager::collect()
+inline void HeapManager::collect() const
 {
 	MemoryBlock* pBlock = FreeList;
 	MemoryBlock* pReturnBlock;
