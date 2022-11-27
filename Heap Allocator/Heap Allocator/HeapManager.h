@@ -40,11 +40,6 @@ MemoryBlock* GetMemoryBlock()
 	return pReturnBlock;
 }
 
-MemoryBlock* GetFreeMemoryBlock()
-{
-	return GetMemoryBlock();
-}
-
 // Returning a node to pFreeBlock after coalescing
 void ReturnMemoryBlock(MemoryBlock* i_pFreeBlock)
 {
@@ -91,7 +86,7 @@ HeapManager* HeapManager::create(void* i_pMemory, size_t i_sizeMemory, unsigned 
 
 void* HeapManager::_alloc(size_t i_size)
 {
-	MemoryBlock* pBlock = GetFreeMemoryBlock();
+	MemoryBlock* pBlock = GetMemoryBlock();
 
 	MemoryBlock* pFreeBlock = FreeList;
 	while (pFreeBlock)
