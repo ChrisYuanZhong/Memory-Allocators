@@ -11,26 +11,26 @@ struct MemoryBlock* pFreeList = nullptr;
 
 class HeapManager {
 public:
-	static HeapManager* create(void* i_pMemory, size_t i_sizeMemory, unsigned int i_numDescriptors);
-	void destroy() const {};
-	void* _alloc(size_t i_size);
+	static HeapManager* create(void* i_pMemory, const size_t i_sizeMemory, const unsigned int i_numDescriptors);
+	inline void destroy() const {};
+	void* _alloc(const size_t i_size);
 	//void* _alloc(size_t i_size, unsigned int i_alignment);
-	bool _free(void* i_ptr);
-	void collect();
-	bool Contains(void* i_ptr) const;
-	bool IsAllocated(void* i_ptr) const { return true; }
+	bool _free(const void* i_ptr);
+	inline void collect();
+	inline bool Contains(const void* i_ptr) const;
+	inline bool IsAllocated(void* i_ptr) const { return true; }
 	//size_t getLargestFreeBlock() const;
 	//size_t getTotalFreeMemory() const;
 	//void ShowFreeBlocks() const;
 
-	void TrackAllocation(MemoryBlock* pBlock);
+	inline void TrackAllocation(MemoryBlock* pBlock);
 
 private:
 	struct MemoryBlock* FreeList = nullptr;
 	struct MemoryBlock* OutstandingAllocations = nullptr;
 };
 
-MemoryBlock* GetMemoryBlock()
+inline MemoryBlock* GetMemoryBlock()
 {
 	assert(pFreeList != nullptr);
 
@@ -40,13 +40,13 @@ MemoryBlock* GetMemoryBlock()
 	return pReturnBlock;
 }
 
-MemoryBlock* GetFreeMemoryBlock()
+inline MemoryBlock* GetFreeMemoryBlock()
 {
 	return GetMemoryBlock();
 }
 
 // Returning a node to pFreeBlock after coalescing
-void ReturnMemoryBlock(MemoryBlock* i_pFreeBlock)
+inline void ReturnMemoryBlock(MemoryBlock* i_pFreeBlock)
 {
 	assert(i_pFreeBlock != nullptr);
 	i_pFreeBlock->pBaseAddress = nullptr;
@@ -55,7 +55,7 @@ void ReturnMemoryBlock(MemoryBlock* i_pFreeBlock)
 	pFreeList = i_pFreeBlock;
 }
 
-HeapManager* HeapManager::create(void* i_pMemory, size_t i_sizeMemory, unsigned int i_numDescriptors)
+HeapManager* HeapManager::create(void* i_pMemory, const size_t i_sizeMemory, const unsigned int i_numDescriptors)
 {
 	assert((i_pMemory != nullptr) && (i_sizeMemory > sizeof(MemoryBlock)));
 
@@ -89,7 +89,7 @@ HeapManager* HeapManager::create(void* i_pMemory, size_t i_sizeMemory, unsigned 
 	return &heapManager;
 }
 
-void* HeapManager::_alloc(size_t i_size)
+void* HeapManager::_alloc(const size_t i_size)
 {
 	MemoryBlock* pBlock = GetFreeMemoryBlock();
 
@@ -129,7 +129,7 @@ void* HeapManager::_alloc(size_t i_size)
 	return pBlock->pBaseAddress;
 }
 
-bool HeapManager::_free(void* i_ptr)
+bool HeapManager::_free(const void* i_ptr)
 {
 	// remove the block for this pointer from OutstandingAllocations
 	MemoryBlock* pBlock = OutstandingAllocations;
@@ -179,13 +179,13 @@ bool HeapManager::_free(void* i_ptr)
 	return true;
 }
 
-void HeapManager::TrackAllocation(MemoryBlock* pBlock)
+inline void HeapManager::TrackAllocation(MemoryBlock* pBlock)
 {
 	pBlock->pNextBlock = OutstandingAllocations;
 	OutstandingAllocations = pBlock;
 }
 
-bool HeapManager::Contains(void* i_ptr)const
+inline bool HeapManager::Contains(const void* i_ptr)const
 {
 	MemoryBlock* pBlock = OutstandingAllocations;
 
@@ -199,7 +199,7 @@ bool HeapManager::Contains(void* i_ptr)const
 	return false;
 }
 
-void HeapManager::collect()
+inline void HeapManager::collect()
 {
 	MemoryBlock* pBlock = FreeList;
 	MemoryBlock* pReturnBlock;

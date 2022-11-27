@@ -1,6 +1,4 @@
-
-#include "HeapManagerProxy.h"
-
+#pragma once
 #include <assert.h>
 #include <stdio.h>
 
@@ -11,7 +9,7 @@
 namespace HeapManagerProxy
 {
 
-	HeapManager* CreateHeapManager(void* i_pMemory, size_t i_sizeMemory, unsigned int i_numDescriptors)
+	inline HeapManager* CreateHeapManager(void* i_pMemory, const size_t i_sizeMemory, const unsigned int i_numDescriptors)
 	{
 		return HeapManager::create(i_pMemory, i_sizeMemory, i_numDescriptors);
 	}
@@ -23,7 +21,7 @@ namespace HeapManagerProxy
 		i_pManager->destroy();
 	}*/
 
-	void* alloc(HeapManager* i_pManager, size_t i_size)
+	inline void* alloc(HeapManager* i_pManager, const size_t i_size)
 	{
 		assert(i_pManager);
 		return i_pManager->_alloc(i_size);
@@ -36,14 +34,14 @@ namespace HeapManagerProxy
 		return i_pManager->_alloc(i_size, i_alignment);
 	}*/
 
-	bool free(HeapManager* i_pManager, void* i_ptr)
+	inline bool free(HeapManager* i_pManager, const void* i_ptr)
 	{
 		assert(i_pManager);
 
 		return i_pManager->_free(i_ptr);
 	}
 
-	void Collect(HeapManager* i_pManager)
+	inline void Collect(HeapManager* i_pManager)
 	{
 		assert(i_pManager);
 
@@ -51,21 +49,21 @@ namespace HeapManagerProxy
 	}
 
 
-	bool Contains(const HeapManager* i_pManager, void* i_ptr)
+	inline bool Contains(const HeapManager* i_pManager, const void* i_ptr)
 	{
 		assert(i_pManager);
 
 		return i_pManager->Contains(i_ptr);
 	}
 
-	bool IsAllocated(const HeapManager* i_pManager, void* i_ptr)
+	inline bool IsAllocated(const HeapManager* i_pManager, void* i_ptr)
 	{
 		assert(i_pManager);
 
 		return i_pManager->IsAllocated(i_ptr);
 	}
 
-	void Destroy(const HeapManager* i_pManager)
+	inline void Destroy(const HeapManager* i_pManager)
 	{
 		assert(i_pManager);
 

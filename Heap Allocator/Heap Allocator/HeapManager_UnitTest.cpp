@@ -250,7 +250,7 @@ bool HeapManager_UnitTest()
 	return true;
 }
 
-bool main()
+int main()
 {
 	return HeapManager_UnitTest();
 }
