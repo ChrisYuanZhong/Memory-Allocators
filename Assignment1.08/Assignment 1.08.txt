@@ -1,0 +1,32 @@
+LinkNode* Reverse(LinkNode* i_pRoot)
+{
+	LinkNode* pCurrentFirst = i_pRoot;
+	LinkNode* pNextNode = nullptr;
+
+	for (; i_pRoot->pNext;)
+	{
+		pNextNode = i_pRoot->pNext->pNext;
+		i_pRoot->pNext->pNext = pCurrentFirst;
+		pCurrentFirst = i_pRoot->pNext;
+		i_pRoot->pNext = pNextNode;
+	}
+
+	return pCurrentFirst;
+}
+
+bool IsPalindrome(const char* i_pString)
+{
+	int i = 0;
+	int j = 0;
+
+	for (; i_pString[i] != '\0'; i++);
+	i--;
+	for (; j < i; j++, i--)
+	{
+		if (i_pString[j] != i_pString[i])
+			return false;
+	}
+
+	return true;
+}
+		
