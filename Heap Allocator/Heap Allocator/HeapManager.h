@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <assert.h>
 
 struct MemoryBlock
 {
@@ -18,7 +19,7 @@ public:
 	bool _free(void* i_ptr);
 	void collect();
 	bool Contains(void* i_ptr) const;
-	bool IsAllocated(void* i_ptr) const { return true; }
+	bool IsAllocated(void* i_ptr) const;
 	//size_t getLargestFreeBlock() const;
 	//size_t getTotalFreeMemory() const;
 	//void ShowFreeBlocks() const;
@@ -99,7 +100,7 @@ void* HeapManager::_alloc(size_t i_size)
 	if (!pFreeBlock)
 	{
 		collect();
-		MemoryBlock* pFreeBlock = FreeList;
+		pFreeBlock = FreeList;
 		while (pFreeBlock)
 		{
 			if (pFreeBlock->BlockSize > i_size)
@@ -217,4 +218,12 @@ void HeapManager::collect()
 		}
 		pBlock = pBlock->pNextBlock;
 	}
+}
+
+bool HeapManager::IsAllocated(void* i_ptr) const
+{
+	if (i_ptr)
+		return true;
+	else
+		return false;
 }
