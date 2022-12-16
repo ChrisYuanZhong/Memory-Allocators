@@ -9,6 +9,11 @@
 //#define SUPPORTS_SHOWFREEBLOCKS
 //#define SUPPORTS_SHOWOUTSTANDINGALLOCATIONS
 
+bool HeapManager_ConstCorrect_UnitTest()
+{
+	return true;
+}
+
 bool HeapManager_UnitTest()
 {
 	using namespace HeapManagerProxy;
