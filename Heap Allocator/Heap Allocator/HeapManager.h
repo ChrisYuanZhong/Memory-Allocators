@@ -74,8 +74,8 @@ HeapManager* HeapManager::create(void* i_pMemory, size_t i_sizeMemory, unsigned 
 	pCurrentBlock->pNextBlock = nullptr;
 
 	MemoryBlock* pBlock = GetMemoryBlock();
-	pBlock->pBaseAddress = static_cast<char*>(pBlock->pBaseAddress);
-	pBlock->pBaseAddress = static_cast<char*>(i_pMemory) + sizeof(pFreeList) + sizeof(heapManager.FreeList) + sizeof(heapManager) + 16;
+	pBlock->pBaseAddress = static_cast<uintptr_t*>(pBlock->pBaseAddress);
+	pBlock->pBaseAddress = static_cast<uintptr_t*>(i_pMemory) + sizeof(pFreeList) + sizeof(heapManager.FreeList) + sizeof(heapManager) + 16;
 	pBlock->pBaseAddress = static_cast<void*>(pBlock->pBaseAddress);
 	pBlock->BlockSize = i_sizeMemory - sizeof(pFreeList) - sizeof(heapManager.FreeList) - sizeof(heapManager);
 	pBlock->pNextBlock = heapManager.FreeList;
@@ -117,7 +117,7 @@ void* HeapManager::_alloc(size_t i_size)
 	TrackAllocation(pBlock);
 
 	//shrink this block
-	pFreeBlock->pBaseAddress = static_cast<char*>(pFreeBlock->pBaseAddress) + i_size;
+	pFreeBlock->pBaseAddress = static_cast<uintptr_t*>(pFreeBlock->pBaseAddress) + i_size;
 	pFreeBlock->pBaseAddress = static_cast<void*>(pFreeBlock->pBaseAddress);
 	pFreeBlock->BlockSize -= i_size;
 
@@ -201,7 +201,7 @@ void HeapManager::collect()
 
 	while (pBlock->pNextBlock)
 	{
-		if (static_cast<char*>(pBlock->pBaseAddress) + pBlock->BlockSize == static_cast<char*>(pBlock->pNextBlock->pBaseAddress))
+		if (static_cast<uintptr_t*>(pBlock->pBaseAddress) + pBlock->BlockSize == static_cast<uintptr_t*>(pBlock->pNextBlock->pBaseAddress))
 		{
 			// expand block 1 to include block 2 memory
 			pBlock->BlockSize += pBlock->pNextBlock->BlockSize;
