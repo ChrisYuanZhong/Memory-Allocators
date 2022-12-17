@@ -18,7 +18,7 @@ public:
 	bool _free(const void* i_ptr);
 	inline void collect() const;
 	inline bool Contains(const void* i_ptr) const;
-	inline bool IsAllocated(void* i_ptr) const { return true; }
+	inline bool IsAllocated(void* i_ptr) const;
 	//size_t getLargestFreeBlock() const;
 	//size_t getTotalFreeMemory() const;
 	//void ShowFreeBlocks() const;
@@ -99,7 +99,7 @@ void* HeapManager::_alloc(const size_t i_size)
 	if (!pFreeBlock)
 	{
 		collect();
-		MemoryBlock* pFreeBlock = FreeList;
+		pFreeBlock = FreeList;
 		while (pFreeBlock)
 		{
 			if (pFreeBlock->BlockSize > i_size)
@@ -217,4 +217,12 @@ inline void HeapManager::collect() const
 		}
 		pBlock = pBlock->pNextBlock;
 	}
+}
+
+bool HeapManager::IsAllocated(void* i_ptr) const
+{
+	if (i_ptr)
+		return true;
+	else
+		return false;
 }
