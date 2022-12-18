@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <cassert>
 
 struct MemoryBlock
 {
