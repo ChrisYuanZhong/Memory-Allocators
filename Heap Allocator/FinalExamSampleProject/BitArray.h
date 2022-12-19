@@ -8,10 +8,10 @@ class BitArray
 {
 #ifdef WIN32
 	typedef uint32_t t_BitData;
-#define BitScanForward _BitScanForward
+#define bitScanForward _BitScanForward
 #else
 	typedef uint64_t t_BitData;
-#define BitScanForward _BitScanForward64
+#define bitScanForward _BitScanForward64
 #endif?//?WIN32
 
 public:
@@ -34,6 +34,7 @@ public:
 
 private:
 	size_t numBits = 0;
+	size_t numElements = 0;
 	t_BitData* m_pBits = nullptr;
 	size_t bitsPerElement = 0;
 };
@@ -47,8 +48,9 @@ inline BitArray* BitArray::Create(const size_t i_numBits, HeapManager* i_pAlloca
 	// initializing the bitArray
 	bitArray->bitsPerElement = sizeof(t_BitData) * 8;
 	bitArray->numBits = i_numBits;
-	bitArray->m_pBits = (t_BitData*)i_pAllocator->_alloc(sizeof(t_BitData) * (i_numBits % bitArray->bitsPerElement == 0 && i_numBits / bitArray->bitsPerElement != 0 ? i_numBits / bitArray->bitsPerElement : (i_numBits / bitArray->bitsPerElement) + 1));
-	memset(bitArray->m_pBits, i_startClear ? 0 : -1, (i_numBits % bitArray->bitsPerElement == 0 && bitArray->numBits / bitArray->bitsPerElement != 0 ? i_numBits / bitArray->bitsPerElement : (i_numBits / bitArray->bitsPerElement) + 1) * sizeof(t_BitData));
+	bitArray->numElements = i_numBits % bitArray->bitsPerElement == 0 && i_numBits / bitArray->bitsPerElement != 0 ? i_numBits / bitArray->bitsPerElement : (i_numBits / bitArray->bitsPerElement) + 1;
+	bitArray->m_pBits = (t_BitData*)i_pAllocator->_alloc(bitArray->numElements * sizeof(t_BitData));
+	memset(bitArray->m_pBits, i_startClear ? 0 : -1, bitArray->numElements * sizeof(t_BitData));
 
 	return bitArray;
 }
@@ -92,23 +94,22 @@ inline void BitArray::ClearBit(const size_t i_bitNumber)
 
 inline void BitArray::SetAll()
 {
-	memset(m_pBits, -1, (numBits % bitsPerElement == 0 && numBits / bitsPerElement != 0 ? numBits / bitsPerElement : (numBits / bitsPerElement) + 1) * sizeof(t_BitData));
+	memset(m_pBits, -1, numElements * sizeof(t_BitData));
 }
 
 inline void BitArray::ClearAll()
 {
-	memset(m_pBits, 0, (numBits % bitsPerElement == 0 && numBits / bitsPerElement != 0 ? numBits / bitsPerElement : (numBits / bitsPerElement) + 1) * sizeof(t_BitData));
+	memset(m_pBits, 0, numElements * sizeof(t_BitData));
 }
 
 inline bool BitArray::GetFirstClearBit(size_t& o_bitNumber) const
 {
-	size_t numElements = numBits % bitsPerElement == 0 && numBits / bitsPerElement != 0 ? numBits / bitsPerElement : (numBits / bitsPerElement) + 1;
 	size_t elementIndex = 0;
 	size_t bitIndex = 0;
 
 	for (elementIndex = 0; elementIndex < numElements; elementIndex++)
 	{
-		if (BitScanForward(reinterpret_cast<unsigned long*>(&bitIndex), ~m_pBits[elementIndex]))
+		if (bitScanForward(reinterpret_cast<unsigned long*>(&bitIndex), ~m_pBits[elementIndex]))
 		{
 			o_bitNumber = elementIndex * bitsPerElement + bitIndex;
 			return true;
@@ -120,13 +121,12 @@ inline bool BitArray::GetFirstClearBit(size_t& o_bitNumber) const
 
 inline bool BitArray::GetFirstSetBit(size_t& o_bitNumber) const
 {
-	size_t numElements = numBits % bitsPerElement == 0 && numBits / bitsPerElement != 0 ? numBits / bitsPerElement : (numBits / bitsPerElement) + 1;
 	size_t elementIndex = 0;
 	size_t bitIndex = 0;
 
 	for (elementIndex = 0; elementIndex < numElements; elementIndex++)
 	{
-		if (BitScanForward(reinterpret_cast<unsigned long*>(&bitIndex), m_pBits[elementIndex]))
+		if (bitScanForward(reinterpret_cast<unsigned long*>(&bitIndex), m_pBits[elementIndex]))
 		{
 			o_bitNumber = elementIndex * bitsPerElement + bitIndex;
 			return true;
