@@ -25,7 +25,6 @@ FixedSizeAllocator* FixedSizeAllocator::Create(HeapManager* i_pAllocator)
 			fixedSizeAllocator->tierBaseAddress[tierIndex] = static_cast<void*>(static_cast<uintptr_t*>(fixedSizeAllocator->tierBaseAddress[tierIndex - 1]) + Tiers[tierIndex - 1] * NumTierBlocks[tierIndex - 1]);
 		}
 	}
-	//FixedSizeAllocator* fixedSizeAllocator = new ((FixedSizeAllocator*)i_pAllocator->_alloc(sizeof(FixedSizeAllocator))) FixedSizeAllocator(i_pAllocator);
 
 	return fixedSizeAllocator;
 }
