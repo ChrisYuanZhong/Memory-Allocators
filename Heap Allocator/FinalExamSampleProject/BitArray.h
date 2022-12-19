@@ -62,6 +62,7 @@ inline BitArray::~BitArray()
 inline bool BitArray::IsBitSet(const size_t i_bitNumber) const
 {
 	assert(0 <= i_bitNumber && i_bitNumber < numBits);
+
 	size_t elementIndex = i_bitNumber / bitsPerElement;
 	size_t bitIndex = i_bitNumber % bitsPerElement;
 	return m_pBits[elementIndex] & (static_cast<t_BitData>(1) << bitIndex);
@@ -75,6 +76,7 @@ inline bool BitArray::IsBitClear(const size_t i_bitNumber) const
 inline void BitArray::SetBit(const size_t i_bitNumber)
 {
 	assert(0 <= i_bitNumber && i_bitNumber < numBits);
+
 	size_t elementIndex = i_bitNumber / bitsPerElement;
 	size_t bitIndex = i_bitNumber % bitsPerElement;
 	m_pBits[elementIndex] |= static_cast<t_BitData>(1) << static_cast<t_BitData>(bitIndex);
@@ -83,6 +85,7 @@ inline void BitArray::SetBit(const size_t i_bitNumber)
 inline void BitArray::ClearBit(const size_t i_bitNumber)
 {
 	assert(0 <= i_bitNumber && i_bitNumber < numBits);
+
 	size_t elementIndex = i_bitNumber / bitsPerElement;
 	size_t bitIndex = i_bitNumber % bitsPerElement;
 	m_pBits[elementIndex] &= ~(static_cast<t_BitData>(1) << static_cast<t_BitData>(bitIndex));
@@ -103,6 +106,7 @@ inline bool BitArray::GetFirstClearBit(size_t& o_bitNumber) const
 	size_t numElements = numBits % bitsPerElement == 0 && numBits / bitsPerElement != 0 ? numBits / bitsPerElement : (numBits / bitsPerElement) + 1;
 	size_t elementIndex = 0;
 	size_t bitIndex = 0;
+
 	for (elementIndex = 0; elementIndex < numElements; elementIndex++)
 	{
 		if (BitScanForward(reinterpret_cast<unsigned long*>(&bitIndex), ~m_pBits[elementIndex]))
@@ -120,6 +124,7 @@ inline bool BitArray::GetFirstSetBit(size_t& o_bitNumber) const
 	size_t numElements = numBits % bitsPerElement == 0 && numBits / bitsPerElement != 0 ? numBits / bitsPerElement : (numBits / bitsPerElement) + 1;
 	size_t elementIndex = 0;
 	size_t bitIndex = 0;
+
 	for (elementIndex = 0; elementIndex < numElements; elementIndex++)
 	{
 		if (BitScanForward(reinterpret_cast<unsigned long*>(&bitIndex), m_pBits[elementIndex]))
