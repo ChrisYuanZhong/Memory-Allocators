@@ -29,6 +29,20 @@ FixedSizeAllocator* FixedSizeAllocator::Create(HeapManager* i_pAllocator)
 	return fixedSizeAllocator;
 }
 
+FixedSizeAllocator::~FixedSizeAllocator()
+{
+#ifdef _DEBUG
+	int tierIndex = 0;
+	size_t bitNumber = 0;
+
+	for (tierIndex = 0; tierIndex < NumTiers; tierIndex++)
+	{
+		if (bitArrays[tierIndex]->GetFirstSetBit(bitNumber))
+			OutputDebugStringA("There are still outstanding allocations!");
+	}
+#endif
+}
+
 void* FixedSizeAllocator::alloc(const size_t i_size)
 {
 	int tierIndex = 0;
