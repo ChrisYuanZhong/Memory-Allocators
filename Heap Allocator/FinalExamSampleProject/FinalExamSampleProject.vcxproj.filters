@@ -15,20 +15,23 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="MemorySystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MemorySystem.cpp">
+    <ClCompile Include="FixedSizeAllocators.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HeapManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Allocators.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BitArray.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="FixedSizeAllocators.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -36,6 +39,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MemorySystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BitArray.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

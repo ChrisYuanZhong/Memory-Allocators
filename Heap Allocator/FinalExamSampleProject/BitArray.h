@@ -16,7 +16,6 @@ class BitArray
 #endif?//?WIN32
 
 public:
-	inline BitArray(const size_t i_numBits, const bool i_bInitToZero);
 	inline static BitArray* Create(const size_t i_numBits, HeapManager* i_pAllocator, const bool i_startClear = true);
 
 	inline ~BitArray();
@@ -34,26 +33,23 @@ public:
 	inline bool GetFirstClearBit(size_t& o_bitNumber) const;
 	inline bool GetFirstSetBit(size_t& o_bitNumber) const;
 
-	bool operator[](size_t i_index) const;
-
-	const size_t bitsPerElement = sizeof(t_BitData) * 8;
 private:
 	size_t numBits = 0;
 	t_BitData* m_pBits = nullptr;
+	size_t bitsPerElement = 0;
 };
-
-inline BitArray::BitArray(const size_t i_numBits, const bool i_bInitToZero)
-{
-	numBits = i_numBits;
-	m_pBits = new t_BitData[i_numBits % bitsPerElement == 0 && i_numBits / bitsPerElement != 0 ? i_numBits / bitsPerElement : (i_numBits / bitsPerElement) + 1];
-	memset(m_pBits, i_bInitToZero ? 0 : -1, (i_numBits % bitsPerElement == 0 && numBits / bitsPerElement != 0 ? i_numBits / bitsPerElement : (i_numBits / bitsPerElement) + 1) * sizeof(t_BitData));
-}
 
 inline BitArray* BitArray::Create(const size_t i_numBits, HeapManager* i_pAllocator, const bool i_startClear)
 {
 	assert(i_numBits > 0 && i_pAllocator);
 
-	BitArray* bitArray = new ((BitArray*)i_pAllocator->_alloc(sizeof(BitArray))) BitArray(i_numBits, i_startClear);
+	BitArray* bitArray = reinterpret_cast<BitArray*>(i_pAllocator->_alloc(sizeof(BitArray)));
+
+	// initializing the bitArray
+	bitArray->bitsPerElement = sizeof(t_BitData) * 8;
+	bitArray->numBits = i_numBits;
+	bitArray->m_pBits = (t_BitData*)i_pAllocator->_alloc(sizeof(t_BitData) * (i_numBits % bitArray->bitsPerElement == 0 && i_numBits / bitArray->bitsPerElement != 0 ? i_numBits / bitArray->bitsPerElement : (i_numBits / bitArray->bitsPerElement) + 1));
+	memset(bitArray->m_pBits, i_startClear ? 0 : -1, (i_numBits % bitArray->bitsPerElement == 0 && bitArray->numBits / bitArray->bitsPerElement != 0 ? i_numBits / bitArray->bitsPerElement : (i_numBits / bitArray->bitsPerElement) + 1) * sizeof(t_BitData));
 
 	return bitArray;
 }

@@ -144,6 +144,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Allocators.cpp" />
+    <ClCompile Include="FixedSizeAllocators.cpp" />
+    <ClCompile Include="HeapManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MemorySystem.cpp" />
   </ItemGroup>

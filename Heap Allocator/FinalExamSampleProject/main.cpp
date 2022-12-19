@@ -80,7 +80,6 @@ bool MemorySystem_UnitTest()
 			if (pPtr == nullptr)
 				break;
 		}
-
 		AllocatedAddresses.push_back(pPtr);
 		numAllocs++;
 
@@ -146,7 +145,7 @@ bool MemorySystem_UnitTest()
 
 	// this new [] / delete [] pair should run through your allocator
 	char * pNewTest = new char[1024];
-	
+
 	delete[] pNewTest;
 
 	// we succeeded

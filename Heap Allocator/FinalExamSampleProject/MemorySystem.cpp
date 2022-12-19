@@ -1,5 +1,8 @@
 #include "MemorySystem.h"
 
+HeapManager* pHeapManager = nullptr;
+FixedSizeAllocator* pFixedSizeAllocator = nullptr;
+
 bool InitializeMemorySystem(void * i_pHeapMemory, size_t i_sizeHeapMemory, unsigned int i_OptionalNumDescriptors)
 {
 	// create your HeapManager and FixedSizeAllocators
@@ -18,5 +21,7 @@ void Collect()
 void DestroyMemorySystem()
 {
 	// Destroy your HeapManager and FixedSizeAllocators
+	pHeapManager->~HeapManager();
+	pFixedSizeAllocator->~FixedSizeAllocator();
 }
 
